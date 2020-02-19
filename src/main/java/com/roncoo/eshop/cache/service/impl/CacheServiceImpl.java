@@ -3,6 +3,7 @@ package com.roncoo.eshop.cache.service.impl;
 import javax.annotation.Resource;
 
 import com.roncoo.eshop.cache.service.EhCacheService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import com.roncoo.eshop.cache.service.CacheService;
  * @author Administrator
  *
  */
+@Slf4j
 @Service("cacheService")
 public class CacheServiceImpl implements CacheService {
 	
@@ -106,6 +108,7 @@ public class CacheServiceImpl implements CacheService {
 	public ProductInfo getProductInfoFromReidsCache(Long productId) {
 		String key = PRODUCT_INFO + productId;
 		String jsonStr = jedisCluster.get(key);
+		log.info("从redis缓存中获取 key = {}, ProductInfo == {}", key,  jsonStr);
 		if (StringUtils.isEmpty(jsonStr)) {
 			return null;
 		}
@@ -125,6 +128,7 @@ public class CacheServiceImpl implements CacheService {
 	public ShopInfo getShopInfoFromReidsCache(Long shopId) {
 		String key = SHOP_INFO + shopId;
 		String jsonStr = jedisCluster.get(key);
+		log.info("从redis缓存中获取 key = {}, ShopInfo == {}", key,  jsonStr);
 		if (StringUtils.isEmpty(jsonStr)) {
 			return null;
 		}

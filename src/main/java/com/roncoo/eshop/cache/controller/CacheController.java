@@ -2,6 +2,7 @@ package com.roncoo.eshop.cache.controller;
 
 import javax.annotation.Resource;
 
+import com.roncoo.eshop.cache.model.ShopInfo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,8 +37,22 @@ public class CacheController {
 
 	@RequestMapping("/getProductInfo")
 	@ResponseBody
-	public String getProductInfo(String productId) {
-		return "success";
+	public ProductInfo getProductInfo(Long productId) {
+		ProductInfo productInfoFromReidsCache = cacheService.getProductInfoFromReidsCache(productId);
+		if (productInfoFromReidsCache == null) {
+
+		}
+		return productInfoFromReidsCache;
+	}
+
+	@RequestMapping("/getShopInfo")
+	@ResponseBody
+	public ShopInfo getShopInfo(Long shopId) {
+		ShopInfo shopInfoFromReidsCache = cacheService.getShopInfoFromReidsCache(shopId);
+		if (shopInfoFromReidsCache == null) {
+
+		}
+		return shopInfoFromReidsCache;
 	}
 	
 }
