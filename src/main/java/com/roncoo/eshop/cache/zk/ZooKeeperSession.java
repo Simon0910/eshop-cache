@@ -1,5 +1,6 @@
 package com.roncoo.eshop.cache.zk;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
@@ -14,6 +15,7 @@ import java.util.concurrent.CountDownLatch;
  *
  * @author Administrator
  */
+@Slf4j
 public class ZooKeeperSession {
 
     private static CountDownLatch connectedSemaphore = new CountDownLatch(1);
@@ -47,7 +49,7 @@ public class ZooKeeperSession {
                 e.printStackTrace();
             }
 
-            System.out.println("ZooKeeper session established......");
+            log.info("ZooKeeper Session Established......");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,45 +62,47 @@ public class ZooKeeperSession {
      */
     private class ZooKeeperWatcher implements Watcher {
         public void process(WatchedEvent event) {
-            System.out.println("Receive watched event: " + event.getState());
+            log.info("ZooKeeper Receive Watched Event: {}", event.getState());
             if (KeeperState.SyncConnected == event.getState()) {
                 connectedSemaphore.countDown();
             }
         }
     }
 
-	/**
-	 * 封装单例的静态内部类
-	 *
-	 * @author Administrator
-	 */
-	private static class Singleton {
-		private static ZooKeeperSession instance;
-		static {
-			instance = new ZooKeeperSession();
-		}
-		public static ZooKeeperSession getInstance() {
-			return instance;
-		}
-	}
+    /**
+     * 封装单例的静态内部类
+     *
+     * @author Administrator
+     */
+    private static class Singleton {
+        private static ZooKeeperSession instance;
+
+        static {
+            instance = new ZooKeeperSession();
+        }
+
+        public static ZooKeeperSession getInstance() {
+            return instance;
+        }
+    }
 
 
-	/**
-	 * 获取单例
-	 *
-	 * @return
-	 */
-	public static ZooKeeperSession getInstance() {
-		return Singleton.getInstance();
-	}
+    /**
+     * 获取单例
+     *
+     * @return
+     */
+    public static ZooKeeperSession getInstance() {
+        return Singleton.getInstance();
+    }
 
 
-	/**
-	 * 初始化单例的便捷方法
-	 */
-	public static void init() {
-		getInstance();
-	}
+    /**
+     * 初始化单例的便捷方法
+     */
+    public static void init() {
+        getInstance();
+    }
 
 
     /**
@@ -119,7 +123,8 @@ public class ZooKeeperSession {
             int count = 0;
             while (true) {
                 try {
-                    Thread.sleep(20);
+                    // Thread.sleep(20);
+                    Thread.sleep(500);
                     zookeeper.create(path, "".getBytes(),
                             Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
                 } catch (Exception e2) {

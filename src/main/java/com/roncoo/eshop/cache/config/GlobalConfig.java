@@ -44,9 +44,9 @@ public class GlobalConfig {
     @Bean
     public JedisCluster JedisClusterFactory() {
         Set<HostAndPort> jedisClusterNodes = new HashSet<HostAndPort>();
-//        jedisClusterNodes.add(new HostAndPort("192.168.198.130", 7001));
-//        jedisClusterNodes.add(new HostAndPort("192.168.198.131", 7003));
-//        jedisClusterNodes.add(new HostAndPort("192.168.198.132", 7005));
+        jedisClusterNodes.add(new HostAndPort("192.168.198.130", 7001));
+        jedisClusterNodes.add(new HostAndPort("192.168.198.131", 7003));
+        jedisClusterNodes.add(new HostAndPort("192.168.198.132", 7005));
         JedisCluster jedisCluster = new JedisCluster(jedisClusterNodes);
         return jedisCluster;
     }

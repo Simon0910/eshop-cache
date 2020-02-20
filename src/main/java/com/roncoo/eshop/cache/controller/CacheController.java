@@ -1,14 +1,15 @@
 package com.roncoo.eshop.cache.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.roncoo.eshop.cache.model.ProductInfo;
 import com.roncoo.eshop.cache.model.ShopInfo;
+import com.roncoo.eshop.cache.rebuild.RebuildCacheQueue;
 import com.roncoo.eshop.cache.service.CacheService;
 import com.roncoo.eshop.cache.service.EhCacheService;
 import com.roncoo.eshop.cache.service.impl.CacheServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -77,10 +78,17 @@ public class CacheController {
         }
 
         if (productInfoCache == null) {
-
+            // 就需要从数据源重新拉去数据，重建缓存
+            String productInfoJSON = "{\"id\":  " + productId + " , \"name\": \"iphone7手机\", \"price\": 5599, \"pictureList\":\"a.jpg,b.jpg\", \"specification\": \"iphone7的规格\", \"service\": \"iphone7的售后服务\", \"color\": \"红色,白色,黑色\", \"size\": \"5.5\", \"shopId\": 1, \"modified_time\": \"2017-01-01 12:01:00\"}";
+            ProductInfo productInfo = JSONObject.parseObject(productInfoJSON, ProductInfo.class);
+            // 将数据推送到一个内存队列中
+            RebuildCacheQueue rebuildCacheQueue = RebuildCacheQueue.getInstance();
+            rebuildCacheQueue.putProductInfo(productInfo);
+            return productInfo;
         }
         return productInfoCache;
     }
+
 
     @RequestMapping("/getShopInfo")
     @ResponseBody

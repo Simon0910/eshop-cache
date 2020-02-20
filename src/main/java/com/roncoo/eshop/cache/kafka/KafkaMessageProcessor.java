@@ -32,7 +32,7 @@ public class KafkaMessageProcessor implements Runnable {
 
     @SuppressWarnings("unchecked")
     public void run() {
-        System.out.println("ready ===> ");
+        log.info("Kafka Consumer Ready......");
         ConsumerIterator<byte[], byte[]> it = kafkaStream.iterator();
         while (it.hasNext()) {
             try {

@@ -15,7 +15,7 @@ import javax.servlet.annotation.WebListener;
  *
  * @author Administrator
  */
-//@WebListener
+@WebListener
 public class KafkaInitListener implements ServletContextListener {
 
     public void contextInitialized(ServletContextEvent sce) {
