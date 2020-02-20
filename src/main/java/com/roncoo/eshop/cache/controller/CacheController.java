@@ -31,19 +31,17 @@ public class CacheController {
 
     @RequestMapping("/putLocalCache")
     @ResponseBody
-    public String putLocalCache(ProductInfo productInfo) {
-        ehCacheService.saveLocalCache(String.valueOf(productInfo.getId()), JSON.toJSONString(productInfo));
+    public String putLocalCache(String cacheKey, String jsonStr) {
+        ehCacheService.saveLocalCache(cacheKey, jsonStr);
         return "SUCCESS";
     }
 
     @RequestMapping("/getLocalCache")
     @ResponseBody
-    public ProductInfo getLocalCache(Long id) {
-        String localCache = ehCacheService.getLocalCache(String.valueOf(id));
-        if (StringUtils.isEmpty(localCache)) {
-            return null;
-        }
-        return JSON.parseObject(localCache, ProductInfo.class);
+    public String getLocalCache(String cacheKey) {
+        String localCache = ehCacheService.getLocalCache(cacheKey);
+        log.info("从localCache缓存中获取 key = {}, localCache == {}", cacheKey, localCache);
+        return localCache;
     }
 
 

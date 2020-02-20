@@ -11,6 +11,11 @@ spring:
     password: 123456
     url: jdbc:mysql://localhost:3306/ehcahe?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC
     driver-class-name: com.mysql.jdbc.Driver
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+
 
 mybatis:
   mapper-locations: classpath:mappings/*Mapper.xml
@@ -22,6 +27,9 @@ logging:
     root: info
     org.mybatis: debug
     java.sql: debug
-    org.springframework.web: trace
+#    org.springframework.web: trace
+    org.springframework.web: info
     com:
-      service: debug
+      roncoo:
+        eshop:
+          cache: info
