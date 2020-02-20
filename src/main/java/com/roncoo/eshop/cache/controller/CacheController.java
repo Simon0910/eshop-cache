@@ -37,21 +37,21 @@ public class CacheController {
     @RequestMapping("/getProductInfo")
     @ResponseBody
     public ProductInfo getProductInfo(Long productId) {
-        ProductInfo productInfoFromReidsCache = cacheService.getProductInfoFromReidsCache(productId);
-        if (productInfoFromReidsCache == null) {
+        ProductInfo productInfoFromRedisCache = cacheService.getProductInfoFromRedisCache(productId);
+        if (productInfoFromRedisCache == null) {
 
         }
-        return productInfoFromReidsCache;
+        return productInfoFromRedisCache;
     }
 
     @RequestMapping("/getShopInfo")
     @ResponseBody
     public ShopInfo getShopInfo(Long shopId) {
-        ShopInfo shopInfoFromReidsCache = cacheService.getShopInfoFromReidsCache(shopId);
-        if (shopInfoFromReidsCache == null) {
+        ShopInfo shopInfoFromRedisCache = cacheService.getShopInfoFromRedisCache(shopId);
+        if (shopInfoFromRedisCache == null) {
 
         }
-        return shopInfoFromReidsCache;
+        return shopInfoFromRedisCache;
     }
 
 }

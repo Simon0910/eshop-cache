@@ -74,7 +74,7 @@ public class KafkaMessageProcessor implements Runnable {
         ProductInfo productInfo = JSONObject.parseObject(productInfoJSON, ProductInfo.class);
         cacheService.saveProductInfo2LocalCache(productInfo);
         System.out.println("===================获取刚保存到本地缓存的商品信息：" + cacheService.getProductInfoFromLocalCache(productId));
-        cacheService.saveProductInfo2ReidsCache(productInfo);
+        cacheService.saveProductInfo2RedisCache(productInfo);
     }
 
     /**
@@ -99,7 +99,7 @@ public class KafkaMessageProcessor implements Runnable {
         ShopInfo shopInfo = JSONObject.parseObject(shopInfoJSON, ShopInfo.class);
         cacheService.saveShopInfo2LocalCache(shopInfo);
         System.out.println("===================获取刚保存到本地缓存的店铺信息：" + cacheService.getShopInfoFromLocalCache(shopId));
-        cacheService.saveShopInfo2ReidsCache(shopInfo);
+        cacheService.saveShopInfo2RedisCache(shopInfo);
     }
 
 }

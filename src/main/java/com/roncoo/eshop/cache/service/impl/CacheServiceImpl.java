@@ -104,13 +104,13 @@ public class CacheServiceImpl implements CacheService {
      *
      * @param productInfo
      */
-    public void saveProductInfo2ReidsCache(ProductInfo productInfo) {
+    public void saveProductInfo2RedisCache(ProductInfo productInfo) {
         String key = PRODUCT_INFO + productInfo.getId();
         jedisCluster.set(key, JSONObject.toJSONString(productInfo));
     }
 
     @Override
-    public ProductInfo getProductInfoFromReidsCache(Long productId) {
+    public ProductInfo getProductInfoFromRedisCache(Long productId) {
         String key = PRODUCT_INFO + productId;
         String jsonStr = jedisCluster.get(key);
         log.info("从redis缓存中获取 key = {}, ProductInfo == {}", key, jsonStr);
@@ -125,13 +125,13 @@ public class CacheServiceImpl implements CacheService {
      *
      * @param shopInfo
      */
-    public void saveShopInfo2ReidsCache(ShopInfo shopInfo) {
+    public void saveShopInfo2RedisCache(ShopInfo shopInfo) {
         String key = SHOP_INFO + shopInfo.getId();
         jedisCluster.set(key, JSONObject.toJSONString(shopInfo));
     }
 
     @Override
-    public ShopInfo getShopInfoFromReidsCache(Long shopId) {
+    public ShopInfo getShopInfoFromRedisCache(Long shopId) {
         String key = SHOP_INFO + shopId;
         String jsonStr = jedisCluster.get(key);
         log.info("从redis缓存中获取 key = {}, ShopInfo == {}", key, jsonStr);
