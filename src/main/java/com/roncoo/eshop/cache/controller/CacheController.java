@@ -7,7 +7,7 @@ import com.roncoo.eshop.cache.model.ShopInfo;
 import com.roncoo.eshop.cache.rebuild.RebuildCacheQueue;
 import com.roncoo.eshop.cache.service.CacheService;
 import com.roncoo.eshop.cache.service.EhCacheService;
-import com.roncoo.eshop.cache.service.impl.CacheServiceImpl;
+import com.roncoo.eshop.cache.service.keys.ProductKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,7 +50,7 @@ public class CacheController {
     @ResponseBody
     public ProductInfo getProductInfoFromLocalCache(Long productId) {
         ProductInfo productInfoFromLocalCache = cacheService.getProductInfoFromLocalCache(productId);
-        log.info("从localCache缓存中获取 key = {}, ProductInfo == {}", CacheServiceImpl.PRODUCT_INFO + productId, JSON.toJSONString(productInfoFromLocalCache));
+        log.info("从localCache缓存中获取 key = {}, ProductInfo == {}", ProductKey.productInfo.generateKey(String.valueOf(productId)), JSON.toJSONString(productInfoFromLocalCache));
         if (productInfoFromLocalCache == null) {
 
         }
@@ -74,7 +74,7 @@ public class CacheController {
         ProductInfo productInfoCache = cacheService.getProductInfoFromRedisCache(productId);
         if (productInfoCache == null) {
             productInfoCache = cacheService.getProductInfoFromLocalCache(productId);
-            log.info("从localCache缓存中获取 key = {}, ProductInfo == {}", CacheServiceImpl.PRODUCT_INFO + productId, JSON.toJSONString(productInfoCache));
+            log.info("从localCache缓存中获取 key = {}, ProductInfo == {}", ProductKey.productInfo.generateKey(String.valueOf(productId)), JSON.toJSONString(productInfoCache));
         }
 
         if (productInfoCache == null) {

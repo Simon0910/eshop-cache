@@ -28,28 +28,34 @@ public class RebuildCacheThread implements Runnable {
 
             zkSession.acquireDistributedLock(productInfo.getId());
 
-            ProductInfo existedProductInfo = cacheService.getProductInfoFromRedisCache(productInfo.getId());
+            try {
+                ProductInfo existedProductInfo = cacheService.getProductInfoFromRedisCache(productInfo.getId());
 
-            if (existedProductInfo != null) {
-                // 比较当前数据的时间版本比已有数据的时间版本是新还是旧
-                try {
-                    Date date = productInfo.getUpdateTime();
-                    Date existedDate = productInfo.getUpdateTime();
+                if (existedProductInfo != null) {
+                    // 比较当前数据的时间版本比已有数据的时间版本是新还是旧
+                    try {
+                        Date date = productInfo.getUpdateTime();
+                        Date existedDate = productInfo.getUpdateTime();
 
-                    if (date.before(existedDate)) {
-                        System.out.println("current date[" + productInfo.getUpdateTime() + "] is before existed date[" + existedProductInfo.getUpdateTime() + "]");
-                        continue;
+                        if (date.before(existedDate)) {
+                            System.out.println("current date[" + productInfo.getUpdateTime() + "] is before existed date[" + existedProductInfo.getUpdateTime() + "]");
+                            continue;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println("current date[" + productInfo.getUpdateTime() + "] is after existed date[" + existedProductInfo.getUpdateTime() + "]");
+                } else {
+                    System.out.println("ProductInfo not exist from redis");
                 }
-                System.out.println("current date[" + productInfo.getUpdateTime() + "] is after existed date[" + existedProductInfo.getUpdateTime() + "]");
-            } else {
-                System.out.println("ProductInfo not exist from redis");
-            }
 
-            cacheService.saveProductInfo2RedisCache(productInfo);
+                cacheService.saveProductInfo2LocalCache(productInfo);
+                cacheService.saveProductInfo2RedisCache(productInfo);
+            } finally {
+                zkSession.releaseDistributedLock(productInfo.getId());
+            }
         }
     }
+
 
 }
