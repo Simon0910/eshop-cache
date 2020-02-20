@@ -12,39 +12,40 @@ import java.util.Properties;
 
 /**
  * kafka消费者
- * @author Administrator
  *
+ * @author Administrator
  */
 public class KafkaConsumer implements Runnable {
 
-	private ConsumerConnector consumerConnector;
-	private String topic;
-	
-	public KafkaConsumer(String topic) {
-		this.consumerConnector = Consumer.createJavaConsumerConnector(
-				createConsumerConfig());
-		this.topic = topic;
-	}
-	
-	@SuppressWarnings("rawtypes")
-	public void run() {
-		Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
+    private ConsumerConnector consumerConnector;
+    private String topic;
+
+    public KafkaConsumer(String topic) {
+        this.consumerConnector = Consumer.createJavaConsumerConnector(
+                createConsumerConfig());
+        this.topic = topic;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void run() {
+        Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
         topicCountMap.put(topic, 1);
-        
-        Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = 
-        		consumerConnector.createMessageStreams(topicCountMap);
+
+        Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap =
+                consumerConnector.createMessageStreams(topicCountMap);
         List<KafkaStream<byte[], byte[]>> streams = consumerMap.get(topic);
-        
+
         for (KafkaStream stream : streams) {
             new Thread(new KafkaMessageProcessor(stream)).start();
         }
-	}
-	
-	/**
-	 * 创建kafka cosumer config
-	 * @return
-	 */
-	private static ConsumerConfig createConsumerConfig() {
+    }
+
+    /**
+     * 创建kafka cosumer config
+     *
+     * @return
+     */
+    private static ConsumerConfig createConsumerConfig() {
         Properties props = new Properties();
         props.put("zookeeper.connect", "192.168.198.130:2181,192.168.198.131:2181,192.168.198.132:2181");
         props.put("group.id", "eshop-cache-group");

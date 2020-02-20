@@ -4,19 +4,19 @@ import org.springframework.context.ApplicationContext;
 
 /**
  * spring上下文
- * @author Administrator
  *
+ * @author Administrator
  */
 public class SpringContext {
 
-	private static ApplicationContext applicationContext;
+    private static ApplicationContext applicationContext;
 
-	public static ApplicationContext getApplicationContext() {
-		return applicationContext;
-	}
+    public static ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
 
-	public static void setApplicationContext(ApplicationContext applicationContext) {
-		SpringContext.applicationContext = applicationContext;
-	}
-	
+    public static void setApplicationContext(ApplicationContext applicationContext) {
+        SpringContext.applicationContext = applicationContext;
+    }
+
 }
