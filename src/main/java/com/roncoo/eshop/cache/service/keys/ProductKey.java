@@ -6,6 +6,6 @@ public class ProductKey extends BasePrefix {
         super(expireSeconds, prefix);
     }
 
-    public static ProductKey productInfo = new ProductKey(60, "productInfo:");
-    public static ProductKey shopInfo = new ProductKey(60, "shopInfo:");
+    public static ProductKey productInfo = new ProductKey(60 * 60 * 24 * 90, "productInfo:");
+    public static ProductKey shopInfo = new ProductKey(60 * 60 * 24 * 90, "shopInfo:");
 }

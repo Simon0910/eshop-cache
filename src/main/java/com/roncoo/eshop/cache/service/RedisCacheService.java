@@ -6,7 +6,6 @@ import com.roncoo.eshop.cache.service.keys.KeyPrefix;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import redis.clients.jedis.JedisCluster;
-import redis.clients.jedis.ShardedJedis;
 
 import javax.annotation.Resource;
 
@@ -55,10 +54,12 @@ public class RedisCacheService {
      * 获取当个对象
      */
     public <T> T get(KeyPrefix prefix, String key, Class<T> clazz) {
-        try (ShardedJedis shardedJedis = shardedJedisPoolFactory.getShardedJedis()) {
-            String jsonStr = shardedJedis.get(prefix.generateKey(key));
-            return stringToBean(jsonStr, clazz);
-        }
+        // try (ShardedJedis shardedJedis = shardedJedisPoolFactory.getShardedJedis()) {
+        //     String jsonStr = shardedJedis.get(prefix.generateKey(key));
+        //     return stringToBean(jsonStr, clazz);
+        // }
+        String jsonStr = jedisCluster.get(prefix.generateKey(key));
+        return stringToBean(jsonStr, clazz);
     }
 
     /**
@@ -70,14 +71,21 @@ public class RedisCacheService {
             return null;
         }
         int seconds = prefix.expireSeconds();
-        try (ShardedJedis shardedJedis = shardedJedisPoolFactory.getShardedJedis()) {
-            if (seconds <= 0) {
-                shardedJedis.set(prefix.generateKey(key), str);
-            } else {
-                shardedJedis.setex(prefix.generateKey(key), seconds, str);
-            }
-            return value;
+        // try (ShardedJedis shardedJedis = shardedJedisPoolFactory.getShardedJedis()) {
+        //     if (seconds <= 0) {
+        //         shardedJedis.set(prefix.generateKey(key), str);
+        //     } else {
+        //         shardedJedis.setex(prefix.generateKey(key), seconds, str);
+        //     }
+        //     return value;
+        // }
+        if (seconds <= 0) {
+            jedisCluster.set(prefix.generateKey(key), str);
+        } else {
+            jedisCluster.set(prefix.generateKey(key), str);
+            jedisCluster.expire(prefix.generateKey(key), seconds);
         }
+        return value;
     }
 
 }
