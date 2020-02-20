@@ -77,6 +77,7 @@ public class CacheServiceImpl implements CacheService {
 //	@Cacheable(value = CACHE_NAME, key = "'shop_info:' + #shopId")
     public ShopInfo getShopInfoFromLocalCache(Long shopId) {
         String localCache = ehCacheService.getLocalCache(SHOP_INFO + shopId);
+        log.info("从localCache缓存中获取 key = {}, ShopInfo == {}", SHOP_INFO + shopId, localCache);
         return JSONObject.parseObject(localCache, ShopInfo.class);
     }
 

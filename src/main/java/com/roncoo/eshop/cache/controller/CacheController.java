@@ -5,6 +5,8 @@ import com.roncoo.eshop.cache.model.ProductInfo;
 import com.roncoo.eshop.cache.model.ShopInfo;
 import com.roncoo.eshop.cache.service.CacheService;
 import com.roncoo.eshop.cache.service.EhCacheService;
+import com.roncoo.eshop.cache.service.impl.CacheServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +19,7 @@ import javax.annotation.Resource;
  *
  * @author Administrator
  */
+@Slf4j
 @Controller
 public class CacheController {
 
@@ -41,6 +44,28 @@ public class CacheController {
             return null;
         }
         return JSON.parseObject(localCache, ProductInfo.class);
+    }
+
+
+    @RequestMapping("/getProductInfoFromLocalCache")
+    @ResponseBody
+    public ProductInfo getProductInfoFromLocalCache(Long productId) {
+        ProductInfo productInfoFromLocalCache = cacheService.getProductInfoFromLocalCache(productId);
+        log.info("从localCache缓存中获取 key = {}, ProductInfo == {}", CacheServiceImpl.PRODUCT_INFO + productId, JSON.toJSONString(productInfoFromLocalCache));
+        if (productInfoFromLocalCache == null) {
+
+        }
+        return productInfoFromLocalCache;
+    }
+
+    @RequestMapping("/getShopInfoFromLocalCache")
+    @ResponseBody
+    public ShopInfo getShopInfoFromLocalCache(Long shopId) {
+        ShopInfo shopInfoFromLocalCache = cacheService.getShopInfoFromLocalCache(shopId);
+        if (shopInfoFromLocalCache == null) {
+
+        }
+        return shopInfoFromLocalCache;
     }
 
 
