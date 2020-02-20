@@ -70,11 +70,16 @@ public class CacheController {
     @RequestMapping("/getProductInfo")
     @ResponseBody
     public ProductInfo getProductInfo(Long productId) {
-        ProductInfo productInfoFromRedisCache = cacheService.getProductInfoFromRedisCache(productId);
-        if (productInfoFromRedisCache == null) {
+        ProductInfo productInfoCache = cacheService.getProductInfoFromRedisCache(productId);
+        if (productInfoCache == null) {
+            productInfoCache = cacheService.getProductInfoFromLocalCache(productId);
+            log.info("从localCache缓存中获取 key = {}, ProductInfo == {}", CacheServiceImpl.PRODUCT_INFO + productId, JSON.toJSONString(productInfoCache));
+        }
+
+        if (productInfoCache == null) {
 
         }
-        return productInfoFromRedisCache;
+        return productInfoCache;
     }
 
     @RequestMapping("/getShopInfo")

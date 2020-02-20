@@ -5,14 +5,19 @@ import com.roncoo.eshop.cache.model.ProductInfo;
 import com.roncoo.eshop.cache.model.ShopInfo;
 import com.roncoo.eshop.cache.service.CacheService;
 import com.roncoo.eshop.cache.spring.SpringContext;
+import com.roncoo.eshop.cache.zk.ZooKeeperSession;
 import kafka.consumer.ConsumerIterator;
 import kafka.consumer.KafkaStream;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Date;
 
 /**
  * kafka消息处理线程
  *
  * @author Administrator
  */
+@Slf4j
 @SuppressWarnings("rawtypes")
 public class KafkaMessageProcessor implements Runnable {
 
@@ -74,6 +79,29 @@ public class KafkaMessageProcessor implements Runnable {
         ProductInfo productInfo = JSONObject.parseObject(productInfoJSON, ProductInfo.class);
         cacheService.saveProductInfo2LocalCache(productInfo);
         System.out.println("===================获取刚保存到本地缓存的商品信息：" + cacheService.getProductInfoFromLocalCache(productId));
+
+        // 加代码，在将数据直接写入redis缓存之前，应该先获取一个zk的分布式锁
+        ZooKeeperSession zkSession = ZooKeeperSession.getInstance();
+        zkSession.acquireDistributedLock(productId);
+        // 获取到了锁
+        // 先从redis中获取数据
+        ProductInfo existedProductInfo = cacheService.getProductInfoFromRedisCache(productId);
+        if (existedProductInfo != null) {
+            // 比较当前数据的时间版本比已有数据的时间版本是新还是旧
+            try {
+                Date updateTime = productInfo.getUpdateTime();
+                Date existedUpdateTime = existedProductInfo.getUpdateTime();
+                if (updateTime.before(existedUpdateTime)) {
+                    System.out.println("current date[" + productInfo.getUpdateTime() + "] is before existed date[" + existedProductInfo.getUpdateTime() + "]");
+                    return;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println("current date[" + productInfo.getUpdateTime() + "] is after existed date[" + existedProductInfo.getUpdateTime() + "]");
+        } else {
+            System.out.println("ProductInfo not exist from redis");
+        }
         cacheService.saveProductInfo2RedisCache(productInfo);
     }
 

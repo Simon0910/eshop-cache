@@ -1,5 +1,7 @@
 package com.roncoo.eshop.cache.model;
 
+import java.util.Date;
+
 /**
  * 商品信息
  *
@@ -16,6 +18,7 @@ public class ProductInfo {
     private String color;
     private String size;
     private Long shopId;
+    private Date updateTime;
 
     public ProductInfo() {
 
@@ -93,12 +96,12 @@ public class ProductInfo {
         this.shopId = shopId;
     }
 
-    @Override
-    public String toString() {
-        return "ProductInfo [id=" + id + ", name=" + name + ", price=" + price
-                + ", pictureList=" + pictureList + ", specification="
-                + specification + ", service=" + service + ", color=" + color
-                + ", size=" + size + ", shopId=" + shopId + "]";
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
 }
