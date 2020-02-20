@@ -20,8 +20,7 @@ public class RebuildCacheThread implements Runnable {
         log.info("Rebuild Cache Queue Ready......");
         RebuildCacheQueue rebuildCacheQueue = RebuildCacheQueue.getInstance();
         ZooKeeperSession zkSession = ZooKeeperSession.getInstance();
-        CacheService cacheService = (CacheService) SpringContext.getApplicationContext()
-                .getBean("cacheService");
+        CacheService cacheService = (CacheService) SpringContext.getApplicationContext().getBean("cacheService");
 
         while (true) {
             ProductInfo productInfo = rebuildCacheQueue.takeProductInfo();
@@ -51,6 +50,8 @@ public class RebuildCacheThread implements Runnable {
 
                 cacheService.saveProductInfo2LocalCache(productInfo);
                 cacheService.saveProductInfo2RedisCache(productInfo);
+            } catch (Exception e) {
+                e.printStackTrace();
             } finally {
                 zkSession.releaseDistributedLock(productInfo.getId());
             }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * 缓存Controller
@@ -74,7 +75,9 @@ public class CacheController {
 
             if (productInfoCache == null) {
                 // 就需要从数据源重新拉去数据，重建缓存
-                String productInfoJSON = "{\"id\":  " + productId + " , \"name\": \"iphone7手机\", \"price\": 5599, \"pictureList\":\"a.jpg,b.jpg\", \"specification\": \"iphone7的规格\", \"service\": \"iphone7的售后服务\", \"color\": \"红色,白色,黑色\", \"size\": \"5.5\", \"shopId\": 1, \"modified_time\": \"2017-01-01 12:01:00\"}";
+                Date now = new Date();
+                long updateTimeNow = now.getTime();
+                String productInfoJSON = "{\"id\":  " + productId + " , \"name\": \"iphone7手机Rebuild\", \"price\": 5599, \"pictureList\":\"a.jpg,b.jpg\", \"specification\": \"iphone7的规格\", \"service\": \"iphone7的售后服务\", \"color\": \"红色,白色,黑色\", \"size\": \"5.5\", \"shopId\": 1, \"updateTime\": \"" + updateTimeNow + "\"}";
                 ProductInfo productInfo = JSONObject.parseObject(productInfoJSON, ProductInfo.class);
                 // 将数据推送到一个内存队列中
                 RebuildCacheQueue rebuildCacheQueue = RebuildCacheQueue.getInstance();

@@ -74,35 +74,51 @@ public class KafkaMessageProcessor implements Runnable {
         // 龙果有分布式事务的课程，主要讲解的分布式事务几种解决方案，里面也涉及到了一些mq，或者其他的一些技术，但是那些技术都是浅浅的给你搭建一下，使用
         // 你从一个课程里，还是学到的是里面围绕的讲解的一些核心的知识
         // 缓存架构：高并发、高性能、海量数据，等场景
-
-        String productInfoJSON = "{\"id\":" + productId + ", \"name\": \"iphone7手机\", \"price\": 5599, \"pictureList\":\"a.jpg,b.jpg\", \"specification\": \"iphone7的规格\", \"service\": \"iphone7的售后服务\", \"color\": \"红色,白色,黑色\", \"size\": \"5.5\", \"shopId\": 1}";
+        Date now = new Date();
+        long updateTimeNow = now.getTime();
+        String productInfoJSON = "{\"id\":" + productId + ", \"name\": \"iphone7手机Kafka\", \"price\": 5599, \"pictureList\":\"a.jpg,b.jpg\", \"specification\": \"iphone7的规格\", \"service\": \"iphone7的售后服务\", \"color\": \"红色,白色,黑色\", \"size\": \"5.5\", \"shopId\": 1, \"updateTime\": \"" + updateTimeNow + "\"}";
         ProductInfo productInfo = JSONObject.parseObject(productInfoJSON, ProductInfo.class);
-        cacheService.saveProductInfo2LocalCache(productInfo);
-        System.out.println("===================获取刚保存到本地缓存的商品信息：" + cacheService.getProductInfoFromLocalCache(productId));
 
         // 加代码，在将数据直接写入redis缓存之前，应该先获取一个zk的分布式锁
         ZooKeeperSession zkSession = ZooKeeperSession.getInstance();
         zkSession.acquireDistributedLock(productId);
         // 获取到了锁
-        // 先从redis中获取数据
-        ProductInfo existedProductInfo = cacheService.getProductInfoFromRedisCache(productId);
-        if (existedProductInfo != null) {
-            // 比较当前数据的时间版本比已有数据的时间版本是新还是旧
-            try {
-                Date updateTime = productInfo.getUpdateTime();
-                Date existedUpdateTime = existedProductInfo.getUpdateTime();
-                if (updateTime.before(existedUpdateTime)) {
-                    System.out.println("current date[" + productInfo.getUpdateTime() + "] is before existed date[" + existedProductInfo.getUpdateTime() + "]");
-                    return;
+        try {
+            // 先从redis中获取数据
+            ProductInfo existedProductInfo = cacheService.getProductInfoFromRedisCache(productId);
+            if (existedProductInfo != null) {
+                // 比较当前数据的时间版本比已有数据的时间版本是新还是旧
+                try {
+                    Date updateTime = productInfo.getUpdateTime();
+                    Date existedUpdateTime = existedProductInfo.getUpdateTime();
+                    if (updateTime.before(existedUpdateTime)) {
+                        System.out.println("current date[" + productInfo.getUpdateTime() + "] is before existed date[" + existedProductInfo.getUpdateTime() + "]");
+                        return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
+                System.out.println("current date[" + productInfo.getUpdateTime() + "] is after existed date[" + existedProductInfo.getUpdateTime() + "]");
+            } else {
+                System.out.println("ProductInfo not exist from redis");
+            }
+
+            try {
+                Thread.sleep(10 * 1000);
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("current date[" + productInfo.getUpdateTime() + "] is after existed date[" + existedProductInfo.getUpdateTime() + "]");
-        } else {
-            System.out.println("ProductInfo not exist from redis");
+
+            cacheService.saveProductInfo2LocalCache(productInfo);
+            System.out.println("===================获取刚保存到本地缓存的商品信息：");
+            cacheService.getProductInfoFromLocalCache(productId);
+            cacheService.saveProductInfo2RedisCache(productInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            zkSession.releaseDistributedLock(productId);
         }
-        cacheService.saveProductInfo2RedisCache(productInfo);
+
     }
 
     /**
