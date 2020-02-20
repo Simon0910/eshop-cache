@@ -1,10 +1,12 @@
 package com.roncoo.eshop.cache.service;
 
 import com.alibaba.fastjson.JSON;
+import com.roncoo.eshop.cache.redis.ShardedJedisPoolFactory;
 import com.roncoo.eshop.cache.service.keys.KeyPrefix;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.ShardedJedis;
 
 import javax.annotation.Resource;
 
@@ -13,6 +15,9 @@ public class RedisCacheService {
 
     @Resource
     private JedisCluster jedisCluster;
+
+    @Resource
+    private ShardedJedisPoolFactory shardedJedisPoolFactory;
 
     private static <T> String beanToString(T value) {
         if (value == null) {
@@ -50,25 +55,29 @@ public class RedisCacheService {
      * 获取当个对象
      */
     public <T> T get(KeyPrefix prefix, String key, Class<T> clazz) {
-        String jsonStr = jedisCluster.get(prefix.generateKey(key));
-        return stringToBean(jsonStr, clazz);
+        try (ShardedJedis shardedJedis = shardedJedisPoolFactory.getShardedJedis()) {
+            String jsonStr = shardedJedis.get(prefix.generateKey(key));
+            return stringToBean(jsonStr, clazz);
+        }
     }
 
     /**
      * 设置对象
      */
-    public <T> boolean set(KeyPrefix prefix, String key, T value) {
+    public <T> T set(KeyPrefix prefix, String key, T value) {
         String str = beanToString(value);
         if (StringUtils.isEmpty(str)) {
-            return false;
+            return null;
         }
         int seconds = prefix.expireSeconds();
-        if (seconds <= 0) {
-            jedisCluster.set(prefix.generateKey(key), str);
-        } else {
-            jedisCluster.setex(prefix.generateKey(key), seconds, str);
+        try (ShardedJedis shardedJedis = shardedJedisPoolFactory.getShardedJedis()) {
+            if (seconds <= 0) {
+                shardedJedis.set(prefix.generateKey(key), str);
+            } else {
+                shardedJedis.setex(prefix.generateKey(key), seconds, str);
+            }
+            return value;
         }
-        return true;
     }
 
 }
