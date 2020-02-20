@@ -1,9 +1,12 @@
 package com.roncoo.eshop.cache.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.roncoo.eshop.cache.model.ProductInfo;
 import com.roncoo.eshop.cache.model.ShopInfo;
 import com.roncoo.eshop.cache.service.CacheService;
+import com.roncoo.eshop.cache.service.EhCacheService;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -18,19 +21,26 @@ import javax.annotation.Resource;
 public class CacheController {
 
     @Resource
+    private EhCacheService ehCacheService;
+
+    @Resource
     private CacheService cacheService;
 
-    @RequestMapping("/testPutCache")
+    @RequestMapping("/putLocalCache")
     @ResponseBody
-    public String testPutCache(ProductInfo productInfo) {
-        cacheService.saveLocalCache(productInfo);
-        return "success";
+    public String putLocalCache(ProductInfo productInfo) {
+        ehCacheService.saveLocalCache(String.valueOf(productInfo.getId()), JSON.toJSONString(productInfo));
+        return "SUCCESS";
     }
 
-    @RequestMapping("/testGetCache")
+    @RequestMapping("/getLocalCache")
     @ResponseBody
-    public ProductInfo testGetCache(Long id) {
-        return cacheService.getLocalCache(id);
+    public ProductInfo getLocalCache(Long id) {
+        String localCache = ehCacheService.getLocalCache(String.valueOf(id));
+        if (StringUtils.isEmpty(localCache)) {
+            return null;
+        }
+        return JSON.parseObject(localCache, ProductInfo.class);
     }
 
 

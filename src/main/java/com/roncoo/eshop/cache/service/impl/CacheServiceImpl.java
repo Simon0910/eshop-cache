@@ -33,27 +33,8 @@ public class CacheServiceImpl implements CacheService {
     @Resource
     private JedisCluster jedisCluster;
 
-    /**
-     * 将商品信息保存到本地缓存中
-     *
-     * @param productInfo
-     * @return
-     */
-    @CachePut(value = CACHE_NAME, key = "'key_'+#productInfo.getId()")
-    public ProductInfo saveLocalCache(ProductInfo productInfo) {
-        return productInfo;
-    }
 
-    /**
-     * 从本地缓存中获取商品信息
-     *
-     * @param id
-     * @return
-     */
-    @Cacheable(value = CACHE_NAME, key = "'key_'+#id")
-    public ProductInfo getLocalCache(Long id) {
-        return null;
-    }
+    // ======================ehcache========================
 
     /**
      * 将商品信息保存到本地的ehcache缓存中
@@ -98,6 +79,9 @@ public class CacheServiceImpl implements CacheService {
         String localCache = ehCacheService.getLocalCache(SHOP_INFO + shopId);
         return JSONObject.parseObject(localCache, ShopInfo.class);
     }
+
+
+    // ======================redis========================
 
     /**
      * 将商品信息保存到redis中
