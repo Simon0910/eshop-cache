@@ -51,7 +51,7 @@ public class KafkaMessageProcessor implements Runnable {
                     processShopInfoChangeMessage(messageJSONObject);
                 }
             } catch (Exception e) {
-                System.out.println("error - " + e.getMessage());
+                log.error("error - " + e);
             } finally {
 
             }
@@ -92,25 +92,25 @@ public class KafkaMessageProcessor implements Runnable {
                     Date updateTime = productInfo.getUpdateTime();
                     Date existedUpdateTime = existedProductInfo.getUpdateTime();
                     if (updateTime.before(existedUpdateTime)) {
-                        System.out.println("current date[" + productInfo.getUpdateTime() + "] is before existed date[" + existedProductInfo.getUpdateTime() + "]");
+                        log.info("current date[" + productInfo.getUpdateTime() + "] is before existed date[" + existedProductInfo.getUpdateTime() + "]");
                         return;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                System.out.println("current date[" + productInfo.getUpdateTime() + "] is after existed date[" + existedProductInfo.getUpdateTime() + "]");
+                log.info("current date[" + productInfo.getUpdateTime() + "] is after existed date[" + existedProductInfo.getUpdateTime() + "]");
             } else {
-                System.out.println("ProductInfo not exist from redis");
+                log.info("ProductInfo not exist from redis");
             }
 
-            try {
-                Thread.sleep(10 * 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            // try {
+            //     Thread.sleep(10 * 1000);
+            // } catch (InterruptedException e) {
+            //     e.printStackTrace();
+            // }
 
             cacheService.saveProductInfo2LocalCache(productInfo);
-            System.out.println("===================获取刚保存到本地缓存的商品信息：");
+            log.info("===================获取刚保存到本地缓存的商品信息：");
             cacheService.getProductInfoFromLocalCache(productId);
             cacheService.saveProductInfo2RedisCache(productInfo);
         } catch (Exception e) {
@@ -142,7 +142,7 @@ public class KafkaMessageProcessor implements Runnable {
         String shopInfoJSON = "{\"id\":" + shopId + ", \"name\": \"小王的手机店\", \"level\": 5, \"goodCommentRate\":0.99}";
         ShopInfo shopInfo = JSONObject.parseObject(shopInfoJSON, ShopInfo.class);
         cacheService.saveShopInfo2LocalCache(shopInfo);
-        System.out.println("===================获取刚保存到本地缓存的店铺信息：" + cacheService.getShopInfoFromLocalCache(shopId));
+        log.info("===================获取刚保存到本地缓存的店铺信息：" + cacheService.getShopInfoFromLocalCache(shopId));
         cacheService.saveShopInfo2RedisCache(shopInfo);
     }
 

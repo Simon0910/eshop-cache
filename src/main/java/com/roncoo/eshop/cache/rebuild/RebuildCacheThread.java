@@ -37,16 +37,22 @@ public class RebuildCacheThread implements Runnable {
                         Date existedDate = productInfo.getUpdateTime();
 
                         if (date.before(existedDate)) {
-                            System.out.println("current date[" + productInfo.getUpdateTime() + "] is before existed date[" + existedProductInfo.getUpdateTime() + "]");
+                            log.info("current date[" + productInfo.getUpdateTime() + "] is before existed date[" + existedProductInfo.getUpdateTime() + "]");
                             continue;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    System.out.println("current date[" + productInfo.getUpdateTime() + "] is after existed date[" + existedProductInfo.getUpdateTime() + "]");
+                    log.info("current date[" + productInfo.getUpdateTime() + "] is after existed date[" + existedProductInfo.getUpdateTime() + "]");
                 } else {
-                    System.out.println("ProductInfo not exist from redis");
+                    log.info("ProductInfo not exist from redis");
                 }
+
+                // try {
+                //     Thread.sleep(10 * 1000);
+                // } catch (InterruptedException e) {
+                //     e.printStackTrace();
+                // }
 
                 cacheService.saveProductInfo2LocalCache(productInfo);
                 cacheService.saveProductInfo2RedisCache(productInfo);

@@ -32,7 +32,7 @@ public class ZooKeeperSession {
                     50000,
                     new ZooKeeperWatcher());
             // 给一个状态CONNECTING，连接中
-            System.out.println(zookeeper.getState());
+            log.info(zookeeper.getState().name());
 
             try {
                 // CountDownLatch
@@ -116,23 +116,23 @@ public class ZooKeeperSession {
         try {
             zookeeper.create(path, "".getBytes(),
                     Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
-            System.out.println("success to acquire lock for product[id=" + productId + "]");
+            log.info("success to acquire lock for product[id=" + productId + "]");
         } catch (Exception e) {
             // 如果那个商品对应的锁的node，已经存在了，就是已经被别人加锁了，那么就这里就会报错
             // NodeExistsException
             int count = 0;
             while (true) {
                 try {
-                    // Thread.sleep(20);
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
+                    // Thread.sleep(1000);
                     zookeeper.create(path, "".getBytes(),
                             Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
                 } catch (Exception e2) {
                     count++;
-                    System.out.println("the " + count + " times try to acquire lock for product[id=" + productId + "]......");
+                    log.info("the " + count + " times try to acquire lock for product[id=" + productId + "]......");
                     continue;
                 }
-                System.out.println("success to acquire lock for product[id=" + productId + "] after " + count + " times try......");
+                log.info("success to acquire lock for product[id=" + productId + "] after " + count + " times try......");
                 break;
             }
         }
@@ -148,7 +148,7 @@ public class ZooKeeperSession {
         String path = "/product-lock-" + productId;
         try {
             zookeeper.delete(path, -1);
-            System.out.println("release the lock for product[id=" + productId + "]......");
+            log.info("release the lock for product[id=" + productId + "]......");
         } catch (Exception e) {
             e.printStackTrace();
         }

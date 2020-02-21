@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.roncoo.eshop.cache.model.ProductInfo;
 import com.roncoo.eshop.cache.model.ShopInfo;
 import com.roncoo.eshop.cache.service.keys.ProductKey;
+import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 public class JedisTest {
 
     public static void main(String[] args) throws Exception {
@@ -20,14 +22,14 @@ public class JedisTest {
         JedisCluster jedisCluster = new JedisCluster(nodes);
 
         String s1 = jedisCluster.get(ProductKey.productInfo.generateKey(String.valueOf(1)));
-        System.out.println(s1);
+        log.info(s1);
         ProductInfo productInfo = JSONObject.parseObject(s1, ProductInfo.class);
 
         String s2 = jedisCluster.get(ProductKey.shopInfo.generateKey(String.valueOf(1)));
-        System.out.println(s2);
+        log.info(s2);
         ShopInfo shopInfo = JSONObject.parseObject(s2, ShopInfo.class);
 
-        System.out.println();
+        shopInfo.getId();
     }
 
 }
