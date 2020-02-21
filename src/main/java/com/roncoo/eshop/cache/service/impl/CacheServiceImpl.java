@@ -110,7 +110,7 @@ public class CacheServiceImpl implements CacheService {
     @Override
     public ShopInfo getShopInfoFromRedisCache(Long shopId) {
         ShopInfo shopInfo = redisCacheService.get(ProductKey.productInfo, String.valueOf(shopId), ShopInfo.class);
-        log.info("从redis缓存中获取 key = {}, ProductInfo == {}", ProductKey.productInfo.generateKey(String.valueOf(shopId)), JSON.toJSONString(shopInfo));
+        log.info("从redis缓存中获取 key = {}, ShopInfo == {}", ProductKey.shopInfo.generateKey(String.valueOf(shopId)), JSON.toJSONString(shopInfo));
         return shopInfo;
     }
 
