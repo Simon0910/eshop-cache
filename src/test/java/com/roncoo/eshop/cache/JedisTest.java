@@ -21,15 +21,18 @@ public class JedisTest {
         nodes.add(new HostAndPort("192.168.198.132", 7005));
         JedisCluster jedisCluster = new JedisCluster(nodes);
 
-        String s1 = jedisCluster.get(ProductKey.productInfo.generateKey(String.valueOf(1)));
+        // id
+        String id = "5";
+
+        String s1 = jedisCluster.get(ProductKey.productInfo.generateKey(String.valueOf(id)));
         log.info(s1);
         ProductInfo productInfo = JSONObject.parseObject(s1, ProductInfo.class);
+        System.out.println(productInfo);
 
-        String s2 = jedisCluster.get(ProductKey.shopInfo.generateKey(String.valueOf(1)));
+        String s2 = jedisCluster.get(ProductKey.shopInfo.generateKey(String.valueOf(id)));
         log.info(s2);
         ShopInfo shopInfo = JSONObject.parseObject(s2, ShopInfo.class);
-
-        shopInfo.getId();
+        System.out.println(shopInfo);
     }
 
 }
