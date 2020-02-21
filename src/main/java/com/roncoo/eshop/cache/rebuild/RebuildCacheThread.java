@@ -10,6 +10,8 @@ import java.util.Date;
 
 /**
  * 缓存重建线程
+ * // TODO: 2020/2/21   缓存重建 & Kaka缓存更新 不在同一台缓存实例 导致ehcache不一致怎么办?
+ * // TODO: 2020/2/21   能否Kafka消息 -> 到 nginx 走和缓存重建相同的ngixn路由规则?
  *
  * @author Administrator
  */

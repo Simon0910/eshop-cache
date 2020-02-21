@@ -141,8 +141,10 @@ public class KafkaMessageProcessor implements Runnable {
 
         String shopInfoJSON = "{\"id\":" + shopId + ", \"name\": \"小王的手机店\", \"level\": 5, \"goodCommentRate\":0.99}";
         ShopInfo shopInfo = JSONObject.parseObject(shopInfoJSON, ShopInfo.class);
+
         cacheService.saveShopInfo2LocalCache(shopInfo);
-        log.info("===================获取刚保存到本地缓存的店铺信息：" + cacheService.getShopInfoFromLocalCache(shopId));
+        log.info("===================获取刚保存到本地缓存的店铺信息：");
+        cacheService.getShopInfoFromLocalCache(shopId);
         cacheService.saveShopInfo2RedisCache(shopInfo);
     }
 
