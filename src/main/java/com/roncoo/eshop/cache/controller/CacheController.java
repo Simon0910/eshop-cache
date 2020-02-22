@@ -3,6 +3,7 @@ package com.roncoo.eshop.cache.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.roncoo.eshop.cache.model.ProductInfo;
 import com.roncoo.eshop.cache.model.ShopInfo;
+import com.roncoo.eshop.cache.prewarm.CachePreWarmThread;
 import com.roncoo.eshop.cache.rebuild.RebuildCacheQueue;
 import com.roncoo.eshop.cache.service.CacheService;
 import com.roncoo.eshop.cache.service.EhCacheService;
@@ -101,4 +102,10 @@ public class CacheController {
         return shopInfoFromRedisCache;
     }
 
+
+    @RequestMapping("/preWarmCache")
+    @ResponseBody
+    public void preWarmCache() {
+        new CachePreWarmThread().start();
+    }
 }
