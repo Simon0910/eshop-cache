@@ -232,4 +232,13 @@ public class ZooKeeperSession {
             e.printStackTrace();
         }
     }
+
+    public void createNode(String path) {
+        try {
+            zookeeper.create(path, "".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
