@@ -61,7 +61,7 @@ public class CachePreWarmThread extends Thread {
                             }
 
                             zkSession.createNode("/taskId-status-" + taskId);
-                            zkSession.setNodeData(taskIdStatusLockPath, "success");
+                            zkSession.setNodeData("/taskId-status-" + taskId, "success");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

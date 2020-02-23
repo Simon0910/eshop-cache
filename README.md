@@ -428,5 +428,50 @@ nohup bin/kafka-server-start.sh config/server.properties &
 （4）需要启动eshop-cache缓存服务，因为nginx中的本地缓存可能不在了
 
 
+六、部署一个storm集群
 
+（1）安装Java 7和Python 2.6.6
+
+（2）下载storm安装包，解压缩，重命名，配置环境变量
+
+~/.bashrc
+source ~/.bashrc
+
+（3）修改storm配置文件
+
+mkdir /var/storm
+
+conf/storm.yaml
+
+storm.zookeeper.servers:
+  - "192.168.198.130"
+  - "192.168.198.131"
+  - "192.168.198.132"
+
+nimbus.seeds: ["192.168.198.130"]
+
+storm.local.dir: "/var/storm"
+
+
+slots.ports，指定每个机器上可以启动多少个worker，一个端口号代表一个worker
+
+supervisor.slots.ports:
+    - 6700
+    - 6701
+    - 6702
+    - 6703
+
+(4)启动storm集群和ui界面
+
+一个节点，storm nimbus >/dev/null 2>&1 &
+三个节点，storm supervisor >/dev/null 2>&1 &
+一个节点，storm ui >/dev/null 2>&1 &
+
+需要在两个supervisor节点上, 启动logviewer, 然后才能看到日志, storm logviewer >/dev/null 2>&1 &
+
+（5）访问一下ui界面，8080端口
+
+storm jar /usr/local/eshop-storm-0.0.1-SNAPSHOT.jar com.roncoo.eshop.storm.HotProductTopology HotProductTopology
+
+storm kill HotProductTopology
 ````
