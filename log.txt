@@ -1,0 +1,62 @@
+shutdown -h now
+swithhosts
+
+zk (kafka, 分布式锁, storm) 
+	zkServer.sh start
+	zkServer.sh status
+	zkServer.sh stop
+
+
+redis 集群需用shutdown正常关闭, 
+	否则可能要每个实例上 flushall  和 cluster reset, 
+	再次建立redis-trib.rb create --replicas 1 192.168.31.187:7001 192.168.31.187:7002 192.168.31.19:7003 192.168.31.19:7004 192.168.31.227:7005 192.168.31.227:7006 --replicas: 每个master有几个slave
+
+	/etc/init.d/redis_7001 start
+	/etc/init.d/redis_7002 start
+
+	/etc/init.d/redis_7003 start
+	/etc/init.d/redis_7004 start
+
+	/etc/init.d/redis_7005 start
+	/etc/init.d/redis_7006 start
+
+	redis-cli -h 192.168.198.130 -p 7001
+	cluster info
+
+	redis-cli -h 192.168.198.130 -p 7001 shutdown
+	redis-cli -h 192.168.198.130 -p 7002 shutdown
+	redis-cli -h 192.168.198.131 -p 7003 shutdown
+	redis-cli -h 192.168.198.131 -p 7004 shutdown
+	redis-cli -h 192.168.198.132 -p 7005 shutdown
+	redis-cli -h 192.168.198.132 -p 7006 shutdown
+
+
+kafka (需要建立一次topic)
+
+	cd /usr/local/kafka/
+
+	nohup bin/kafka-server-start.sh config/server.properties &
+
+	/usr/local/kafka/bin/kafka-server-stop.sh 
+ 	
+storm
+
+    一个130节点，storm nimbus >/dev/null 2>&1 &
+    三个节点，storm supervisor >/dev/null 2>&1 &
+    一个130节点，storm ui >/dev/null 2>&1 &
+
+    需要在两个supervisor节点上, 启动logviewer, 然后才能看到日志, storm logviewer >/dev/null 2>&1 &
+
+    http://192.168.198.130:8080/index.html
+
+    storm jar /usr/local/eshop-storm-0.0.1-SNAPSHOT.jar com.roncoo.eshop.storm.HotProductTopology HotProductTopology
+
+    storm kill HotProductTopology
+
+nginx
+
+	/usr/servers/nginx/sbin/nginx 
+
+	/usr/servers/nginx/sbin/nginx -s stop
+
+
