@@ -1,5 +1,6 @@
 package com.roncoo.eshop.cache.redis;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import redis.clients.jedis.*;
@@ -14,6 +15,7 @@ import java.util.Set;
 // import redis.clients.jedis.util.Hashing;
 // import redis.clients.jedis.util.Sharded;
 
+@Slf4j
 @Configuration
 public class Config {
 
@@ -24,6 +26,7 @@ public class Config {
         nodes.add(new HostAndPort("192.168.198.131", 7003));
         nodes.add(new HostAndPort("192.168.198.132", 7005));
         JedisCluster jedisCluster = new JedisCluster(nodes);
+        log.info("Redis Cluster Ready......");
         return jedisCluster;
     }
 

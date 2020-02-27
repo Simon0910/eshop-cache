@@ -19,7 +19,7 @@ import java.util.Date;
 public class RebuildCacheThread implements Runnable {
 
     public void run() {
-        log.info("Rebuild Cache Queue Ready......");
+        log.info("Rebuild Cache Queue Waiting Receive ProductInfo......");
         RebuildCacheQueue rebuildCacheQueue = RebuildCacheQueue.getInstance();
         ZooKeeperSession zkSession = ZooKeeperSession.getInstance();
         CacheService cacheService = (CacheService) SpringContext.getApplicationContext().getBean("cacheService");
