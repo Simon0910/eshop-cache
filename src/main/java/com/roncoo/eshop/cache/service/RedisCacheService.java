@@ -1,6 +1,8 @@
 package com.roncoo.eshop.cache.service;
 
 import com.alibaba.fastjson.JSON;
+import com.roncoo.eshop.cache.hystrix.command.GetFromRedisCommand;
+import com.roncoo.eshop.cache.hystrix.command.Save2RedisCommand;
 import com.roncoo.eshop.cache.redis.ShardedJedisPoolFactory;
 import com.roncoo.eshop.cache.service.keys.KeyPrefix;
 import org.springframework.stereotype.Service;
@@ -58,7 +60,11 @@ public class RedisCacheService {
         //     String jsonStr = shardedJedis.get(prefix.generateKey(key));
         //     return stringToBean(jsonStr, clazz);
         // }
-        String jsonStr = jedisCluster.get(prefix.generateKey(key));
+
+        // String jsonStr = jedisCluster.get(prefix.generateKey(key));
+
+        GetFromRedisCommand getFromRedisCommand = new GetFromRedisCommand(jedisCluster, prefix.generateKey(key));
+        String jsonStr = getFromRedisCommand.execute();
         return stringToBean(jsonStr, clazz);
     }
 
@@ -79,12 +85,17 @@ public class RedisCacheService {
         //     }
         //     return value;
         // }
-        if (seconds <= 0) {
-            jedisCluster.set(prefix.generateKey(key), str);
-        } else {
-            jedisCluster.set(prefix.generateKey(key), str);
-            jedisCluster.expire(prefix.generateKey(key), seconds);
-        }
+
+        // if (seconds <= 0) {
+        //     jedisCluster.set(prefix.generateKey(key), str);
+        // } else {
+        //     jedisCluster.set(prefix.generateKey(key), str);
+        //     jedisCluster.expire(prefix.generateKey(key), seconds);
+        // }
+
+        Save2RedisCommand save2RedisCommand = new Save2RedisCommand(jedisCluster, prefix.generateKey(key), str, seconds);
+        save2RedisCommand.execute();
+
         return value;
     }
 
