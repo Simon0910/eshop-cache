@@ -1,8 +1,8 @@
 package com.roncoo.eshop.cache.service;
 
 import com.alibaba.fastjson.JSON;
-import com.roncoo.eshop.cache.hystrix.command.GetFromRedisCommand;
-import com.roncoo.eshop.cache.hystrix.command.Save2RedisCommand;
+import com.roncoo.eshop.cache.hystrix.command.RedisCacheGetCommand;
+import com.roncoo.eshop.cache.hystrix.command.RedisCacheSetCommand;
 import com.roncoo.eshop.cache.redis.ShardedJedisPoolFactory;
 import com.roncoo.eshop.cache.service.keys.KeyPrefix;
 import org.springframework.stereotype.Service;
@@ -63,8 +63,8 @@ public class RedisCacheService {
 
         // String jsonStr = jedisCluster.get(prefix.generateKey(key));
 
-        GetFromRedisCommand getFromRedisCommand = new GetFromRedisCommand(jedisCluster, prefix.generateKey(key));
-        String jsonStr = getFromRedisCommand.execute();
+        RedisCacheGetCommand redisCacheGetCommand = new RedisCacheGetCommand(jedisCluster, prefix.generateKey(key));
+        String jsonStr = redisCacheGetCommand.execute();
         return stringToBean(jsonStr, clazz);
     }
 
@@ -93,8 +93,8 @@ public class RedisCacheService {
         //     jedisCluster.expire(prefix.generateKey(key), seconds);
         // }
 
-        Save2RedisCommand save2RedisCommand = new Save2RedisCommand(jedisCluster, prefix.generateKey(key), str, seconds);
-        save2RedisCommand.execute();
+        RedisCacheSetCommand redisCacheSetCommand = new RedisCacheSetCommand(jedisCluster, prefix.generateKey(key), str, seconds);
+        redisCacheSetCommand.execute();
 
         return value;
     }
